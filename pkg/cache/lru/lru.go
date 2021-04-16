@@ -2,6 +2,7 @@ package lru
 
 import (
 	"container/list"
+	"errors"
 	"simple-distributed-cache/pkg/cache"
 	"sync"
 )
@@ -68,7 +69,13 @@ func (l *lru) Set(key, value string) error {
 }
 
 func (l lru) Get(key string) (string, error) {
-	panic("implement me")
+	l.mu.RLock()
+	element, ok := l.data[key]
+	if !ok {
+		return "", errors.New("haven't set the key in lru cache")
+	}
+	l.list.MoveToFront(element)
+	return element.Value.(*data).val.(string), nil
 }
 
 // Option is a function on the options for a lru setting.

@@ -38,9 +38,10 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
-  <component name="RunManager" selected="Go Test.Test_lru_Set/LRU_set_fun_function_with_default_options in simple-distributed-cache/pkg/cache/lru">
-    <configuration name="Test_lru_Set in simple-distributed-cache/pkg/cache/lru" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.Test_lru_Get in simple-distributed-cache/pkg/cache/lru">
+    <configuration name="Test_lru_Get in simple-distributed-cache/pkg/cache/lru" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="simple-distributed-cache" />
       <working_directory value="$PROJECT_DIR$/../simple-distributed-cache/pkg/cache/lru" />
       <framework value="gotest" />
@@ -48,15 +49,26 @@
       <package value="simple-distributed-cache/pkg/cache/lru" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
-      <pattern value="^\QTest_lru_Set\E$" />
+      <pattern value="^\QTest_lru_Get\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="Test_lru_Set in simpledistributedcache/pkg/cache/lru" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="Test_lru_Get/LRU_set_fun_function_with_default_options in simple-distributed-cache/pkg/cache/lru" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="simple-distributed-cache" />
-      <working_directory value="$PROJECT_DIR$/pkg/cache/lru" />
+      <working_directory value="$PROJECT_DIR$/../simple-distributed-cache/pkg/cache/lru" />
       <framework value="gotest" />
       <kind value="PACKAGE" />
-      <package value="simpledistributedcache/pkg/cache/lru" />
+      <package value="simple-distributed-cache/pkg/cache/lru" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTest_lru_Get\E$/^\QLRU_set_fun_function_with_default_options\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test_lru_Set in simple-distributed-cache/pkg/cache/lru" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="simple-distributed-cache" />
+      <working_directory value="$PROJECT_DIR$/../simple-distributed-cache/pkg/cache/lru" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="simple-distributed-cache/pkg/cache/lru" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <pattern value="^\QTest_lru_Set\E$" />
@@ -85,10 +97,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.Test_lru_Set/LRU_set_fun_function_with_default_options in simple-distributed-cache/pkg/cache/lru" />
+        <item itemvalue="Go Test.Test_lru_Get in simple-distributed-cache/pkg/cache/lru" />
+        <item itemvalue="Go Test.Test_lru_Get/LRU_set_fun_function_with_default_options in simple-distributed-cache/pkg/cache/lru" />
         <item itemvalue="Go Test.Test_lru_Set in simple-distributed-cache/pkg/cache/lru" />
+        <item itemvalue="Go Test.Test_lru_Set/LRU_set_fun_function_with_default_options in simple-distributed-cache/pkg/cache/lru" />
         <item itemvalue="Go Test.go test simpledistributedcache/pkg/cache/lru" />
-        <item itemvalue="Go Test.Test_lru_Set in simpledistributedcache/pkg/cache/lru" />
       </list>
     </recent_temporary>
   </component>
@@ -112,8 +125,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/../simple-distributed-cache/pkg/cache/lru/lru_test.go</url>
-          <line>63</line>
-          <option name="timeStamp" value="1" />
+          <line>126</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/../simple-distributed-cache/pkg/cache/lru/lru_test.go</url>
+          <line>124</line>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
