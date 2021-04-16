@@ -2,7 +2,7 @@ package lru
 
 import (
 	"container/list"
-	"simpledistributedcache/pkg/cache"
+	"simple-distributed-cache/pkg/cache"
 	"sync"
 )
 
@@ -18,7 +18,7 @@ type lru struct {
 	list           *list.List
 }
 
-func NewLRUWithOptions(options ...Option) cache.SetterGetter {
+func NewLRUWithOption(options ...Option) cache.SetterGetter {
 	opts := &Options{}
 	for _, opt := range options {
 		if opt != nil {
@@ -53,7 +53,7 @@ func (l *lru) Set(key, value string) error {
 		exitElement.Value = value
 		return nil
 	}
-	element := l.list.PushFront(&data{key, value})
+	element := l.list.PushFront(&data{key: key, val: value})
 	l.data[key] = element
 	if int64(len(l.data)) > l.maxElementSize || l.totalBytes > l.maxBytes {
 		element := l.list.Back()
@@ -102,8 +102,8 @@ func OnEvicted(fn OnEvictedFn) Option {
 	}
 }
 
-func DefaultOptions(fn OnEvictedFn) Options {
-	return Options{
+func DefaultOptions(fn OnEvictedFn) *Options {
+	return &Options{
 		maxElementSize: 100,
 		maxBytes:       100,
 		fn:             fn,
