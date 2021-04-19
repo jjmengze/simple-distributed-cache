@@ -6,7 +6,10 @@
 *.dll
 *.so
 *.dylib
-
+.idea
+*.iml
+out
+gen
 # Test binary, built with `go test -c`
 *.test
 
