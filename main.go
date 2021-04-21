@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"k8s.io/klog/v2"
 	"log"
 	"net"
@@ -9,6 +10,7 @@ import (
 	"os/signal"
 	"simple-distributed-cache/pkg/cache/lru"
 	"simple-distributed-cache/pkg/server"
+	"strconv"
 	"syscall"
 	"time"
 )
@@ -20,18 +22,35 @@ func mockOnEvictedFn(key string, value interface{}) error {
 }
 
 func main() {
-	addr := "0.0.0.0:8080"
+	var hostName string
+	var port int
+	var proxy bool
+	flag.StringVar(&hostName, "hostname", "0.0.0.0", "server host name")
+	flag.IntVar(&port, "port", 8080, "server port")
+	flag.BoolVar(&proxy, "proxy", true, "Is a proxy server?")
+	flag.Parse()
+
+	addr := net.JoinHostPort(hostName, strconv.Itoa(port))
+
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
 		klog.Errorf("failed to listen on %v: %v", ln.Addr, err)
 	}
+	peerServer := []string{
+		"0.0.0.0:8081",
+		"0.0.0.0:8082",
+		"0.0.0.0:8083",
+	}
 
 	// get port
 	//serverPort := ln.Addr().(*net.TCPAddr).Port
-	RootCtx := SetupSignalContext()
+	rootCtx := SetupSignalContext()
 	lruCache := lru.NewLRUCache(lru.DefaultOptions(mockOnEvictedFn))
+
 	s := server.NewServer(addr, lruCache)
-	stopCH, err := server.RunServer(RootCtx, s, ln, 10*time.Second)
+	s.Set(nil, peerServer...)
+
+	stopCH, err := server.RunServer(rootCtx, s, ln, 10*time.Second)
 	if err != nil {
 		klog.Fatalf("RunServer err: %v", err)
 	}

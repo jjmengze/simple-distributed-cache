@@ -7,13 +7,16 @@ import (
 	"net"
 	"net/http"
 	"simple-distributed-cache/pkg/cache"
+	"simple-distributed-cache/pkg/cache/consistent"
 	"time"
 )
 
 type Server struct {
 	//addr    string
-	Server http.Server
-	cache  cache.SetterGetter
+	Server         http.Server
+	cache          cache.SetterGetter
+	peersNode      *consistent.ConsistentMap
+	peerMapHandler map[string]PeerGetter
 }
 
 func NewServer(addr string, cache cache.SetterGetter) *Server {
@@ -23,6 +26,17 @@ func NewServer(addr string, cache cache.SetterGetter) *Server {
 	http.HandleFunc("/set", s.setHandler)
 	http.HandleFunc("/get", s.getHandler)
 	return s
+}
+
+func (p *Server) Set(hashFn consistent.HashFn, peers ...string) {
+	if p.peerMapHandler == nil {
+		p.peerMapHandler = make(map[string]PeerGetter)
+	}
+	p.peersNode = consistent.NewConsistentMAP(consistent.DefaultReplicas, hashFn)
+	p.peersNode.Add(peers...)
+	for i := 0; i < len(peers); i++ {
+		p.peerMapHandler[peers[i]] = NewPeer(peers[i], p.cache)
+	}
 }
 
 //func RunServer(ctx context.Context, server *server.Server, ln net.Listener, shutDownTimeout time.Duration) (context.Context, error) {
@@ -70,27 +84,38 @@ func (s *Server) setHandler(w http.ResponseWriter, r *http.Request) {
 	klog.Infof("[Server %s] %s", r.Method, r.URL.Path)
 	key := r.URL.Query().Get("key")
 	value := r.URL.Query().Get("value")
-	err := s.cache.Set(key, value)
-	if err != nil {
-		klog.Errorf("set cache key: %v  value :  %v ,error: ", key, value, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/jason")
-	w.WriteHeader(200)
+
+	peerNodeIndex := s.peersNode.Get(key)
+	handler := s.peerMapHandler[peerNodeIndex].Set(key, value)
+	klog.Infof("proxy set cache action to %s cache server", peerNodeIndex)
+	handler(w, r)
+
+	//err := s.cache.Set(key, value)
+	//if err != nil {
+	//	klog.Errorf("set cache key: %v  value :  %v ,error: ", key, value, err)
+	//	http.Error(w, err.Error(), http.StatusInternalServerError)
+	//	return
+	//}
+	//w.Header().Set("Content-Type", "application/jason")
+	//w.WriteHeader(200)
 }
 
 func (s *Server) getHandler(w http.ResponseWriter, r *http.Request) {
 	klog.Infof("[Server %s] %s", r.Method, r.URL.Path)
 	key := r.URL.Query().Get("key")
-	val, err := s.cache.Get(key)
-	if err != nil {
-		klog.Errorf("get cache key: %v  value :  %v ,error: ", key, val, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/jason")
-	w.WriteHeader(200)
-	klog.Info(val)
-	w.Write([]byte(val))
+
+	peerNodeIndex := s.peersNode.Get(key)
+	handler := s.peerMapHandler[peerNodeIndex].Get(key)
+	handler(w, r)
+
+	//val, err := s.cache.Get(key)
+	//if err != nil {
+	//	klog.Errorf("get cache key: %v  value :  %v ,error: ", key, val, err)
+	//	http.Error(w, err.Error(), http.StatusInternalServerError)
+	//	return
+	//}
+	//w.Header().Set("Content-Type", "application/jason")
+	//w.WriteHeader(200)
+	//klog.Info(val)
+	//w.Write([]byte(val))
 }
