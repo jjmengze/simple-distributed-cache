@@ -2,7 +2,7 @@ package lru
 
 import (
 	"container/list"
-	"errors"
+	"k8s.io/klog/v2"
 	"simple-distributed-cache/pkg/cache"
 	"sync"
 )
@@ -68,14 +68,15 @@ func (l *lru) Set(key string, value interface{}) error {
 	return nil
 }
 
-func (l *lru) Get(key string) (interface{}, error) {
+func (l *lru) Get(key string) (interface{}, bool) {
 	l.mu.RLock()
 	element, ok := l.data[key]
 	if !ok {
-		return "", errors.New("haven't set the key in lru cache")
+		klog.Warningf("haven't set the key:%s in lru cache", key)
+		return "", ok
 	}
 	l.list.MoveToFront(element)
-	return element.Value.(*data).val, nil
+	return element.Value.(*data).val, ok
 }
 
 // Option is a function on the options for a lru setting.

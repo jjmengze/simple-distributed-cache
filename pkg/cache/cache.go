@@ -5,7 +5,7 @@ type Setter interface {
 }
 
 type Getter interface {
-	Get(key string) (interface{}, error)
+	Get(key string) (interface{}, bool)
 }
 
 type SetterGetter interface {

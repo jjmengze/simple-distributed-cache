@@ -116,9 +116,9 @@ func Test_lru_Get(t *testing.T) {
 					return
 				}
 			}
-			got, err := l.Get(tt.args.key)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Get() error = %v, wantErr %v", err, tt.wantErr)
+			got, ok := l.Get(tt.args.key)
+			if (!ok) != tt.wantErr {
+				t.Errorf("Get() error = %v, wantErr %v", ok, tt.wantErr)
 				return
 			}
 			if tt.wantErr {
