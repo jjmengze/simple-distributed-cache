@@ -8,6 +8,10 @@ import (
 
 type HashFn func(data []byte) uint32
 
+const (
+	DefaultReplicas = 3
+)
+
 type ConsistentMap struct {
 	hashFn   HashFn
 	replicas int
