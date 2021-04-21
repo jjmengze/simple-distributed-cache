@@ -46,7 +46,7 @@ type data struct {
 	key interface{}
 }
 
-func (l *lru) Set(key, value string) error {
+func (l *lru) Set(key string, value interface{}) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	if exitElement, ok := l.data[key]; ok {
@@ -68,14 +68,14 @@ func (l *lru) Set(key, value string) error {
 	return nil
 }
 
-func (l lru) Get(key string) (string, error) {
+func (l *lru) Get(key string) (interface{}, error) {
 	l.mu.RLock()
 	element, ok := l.data[key]
 	if !ok {
 		return "", errors.New("haven't set the key in lru cache")
 	}
 	l.list.MoveToFront(element)
-	return element.Value.(*data).val.(string), nil
+	return element.Value.(*data).val, nil
 }
 
 // Option is a function on the options for a lru setting.

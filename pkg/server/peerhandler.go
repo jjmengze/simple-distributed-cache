@@ -28,6 +28,7 @@ func NewPeer(name string, cache cache.SetterGetter) PeerGetter {
 func (p *Peer) Get(key string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		val, err := p.cache.Get(key)
+
 		if err != nil {
 			klog.Errorf("peer node get cache key: %v  value :  %v ,error: ", key, val, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -36,7 +37,7 @@ func (p *Peer) Get(key string) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/jason")
 		w.WriteHeader(200)
 		klog.Info(val)
-		w.Write([]byte(val))
+		w.Write([]byte(val.(string)))
 	}
 }
 func (p *Peer) Set(key string, value interface{}) http.HandlerFunc {

@@ -1,11 +1,11 @@
 package cache
 
 type Setter interface {
-	Set(key, value string) error
+	Set(key string, value interface{}) error
 }
 
 type Getter interface {
-	Get(key string) (string, error)
+	Get(key string) (interface{}, error)
 }
 
 type SetterGetter interface {
