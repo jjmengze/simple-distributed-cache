@@ -130,3 +130,47 @@ func Test_lru_Get(t *testing.T) {
 		})
 	}
 }
+
+func Test_lru_remove(t *testing.T) {
+	type args struct {
+		key   string
+		value string
+	}
+	tests := []struct {
+		name   string
+		fields lru
+		args   args
+	}{
+		{
+			name:   "LRU remove function with default options",
+			fields: mockNewLRUCache(DefaultOptions(mockOnEvictedFn)),
+			args: args{
+				key:   "foo",
+				value: "bar",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := &lru{
+				data:           tt.fields.data,
+				maxElementSize: tt.fields.maxElementSize,
+				maxBytes:       tt.fields.maxBytes,
+				totalBytes:     tt.fields.totalBytes,
+				OnEvicted:      tt.fields.OnEvicted,
+				list:           tt.fields.list,
+			}
+			if tt.args.value != "" {
+				err := l.Set(tt.args.key, tt.args.value)
+				if err != nil {
+					t.Errorf("Set() error = %v", err)
+					return
+				}
+			}
+			l.remove(tt.args.key)
+			if _, ok := l.data[tt.args.key]; ok {
+				t.Errorf("remove() cache error ")
+			}
+		})
+	}
+}

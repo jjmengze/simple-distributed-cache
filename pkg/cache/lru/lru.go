@@ -71,12 +71,27 @@ func (l *lru) Set(key string, value interface{}) error {
 func (l *lru) Get(key string) (interface{}, bool) {
 	l.mu.RLock()
 	element, ok := l.data[key]
+	l.mu.RUnlock()
 	if !ok {
 		klog.Warningf("haven't set the key:%s in lru cache", key)
 		return "", ok
 	}
 	l.list.MoveToFront(element)
 	return element.Value.(*data).val, ok
+}
+
+func (l *lru) remove(key string) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	element, ok := l.data[key]
+	if !ok {
+		klog.Warning("could not remove not exists element in lru cache")
+	}
+	l.list.Remove(element)
+	delete(l.data, key)
+	if l.OnEvicted != nil {
+		l.OnEvicted(key, element.Value)
+	}
 }
 
 // Option is a function on the options for a lru setting.
