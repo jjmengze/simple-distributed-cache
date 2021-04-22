@@ -39,18 +39,22 @@ func NewPeer(name string, dataHandler Getter, cache cache.SetterGetter) PeerGett
 func (p *Peer) Get(key string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		val, ok := p.cache.Get(key)
+		w.Header().Set("Content-Type", "application/jason")
+		w.WriteHeader(http.StatusOK)
 		var err error
 		if !ok && p.dataHandler != nil {
 			klog.V(4).InfoS("peer node not HIT cache, try to get data from remote", "server", p.name, "key", key)
 			val, err = p.getDataFromRemote(key)
+
 		}
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-
-		w.Header().Set("Content-Type", "application/jason")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(val.(string)))
+		if val != nil {
+			w.Write([]byte(val.(string)))
+		} else {
+			w.Write([]byte("can't not get the catch"))
+		}
 	}
 }
 func (p *Peer) Set(key string, value interface{}) http.HandlerFunc {
