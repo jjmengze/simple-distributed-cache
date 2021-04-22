@@ -35,10 +35,10 @@ var db = map[string]string{
 }
 
 //todo fix mock select from db
-func mockSelectFromDB(key string) ([]byte, error) {
+func mockSelectFromDB(key string) (interface{}, error) {
 	klog.V(4).InfoS("[MOCK] search from DB with:", "key", key)
 	if v, ok := db[key]; ok {
-		return []byte(v), nil
+		return v, nil
 	}
 	return nil, fmt.Errorf("%s not exist", key)
 }
@@ -63,7 +63,7 @@ func RunServer(ctx context.Context, server *Server, ln net.Listener, shutDownTim
 	stoppedCh := make(chan struct{})
 	//serverCtx := context.Background()
 	go func() {
-		//defer serverCtx.Done()
+		//defer serve}rCtx.Done()
 		//<-ctx.Done()
 		defer close(stoppedCh)
 		<-ctx.Done()

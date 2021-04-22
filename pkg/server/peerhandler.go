@@ -13,12 +13,12 @@ type PeerGetter interface {
 
 // A Getter loads data for a key.
 type Getter interface {
-	Get(key string) ([]byte, error)
+	Get(key string) (interface{}, error)
 }
 
-type GetterFunc func(key string) ([]byte, error)
+type GetterFunc func(key string) (interface{}, error)
 
-func (f GetterFunc) Get(key string) ([]byte, error) {
+func (f GetterFunc) Get(key string) (interface{}, error) {
 	return f(key)
 }
 
@@ -55,7 +55,7 @@ func (p *Peer) Get(key string) http.HandlerFunc {
 }
 func (p *Peer) Set(key string, value interface{}) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := p.cache.Set(key, value.(string))
+		err := p.cache.Set(key, value)
 		klog.Infof("Set cache key : %s value : %v", key, value)
 		if err != nil {
 			klog.Errorf("peer node set cache key: %v  value :  %v ,error: ", key, value, err)
@@ -67,7 +67,7 @@ func (p *Peer) Set(key string, value interface{}) http.HandlerFunc {
 	}
 }
 
-func (p *Peer) getDataFromRemote(key string) ([]byte, error) {
+func (p *Peer) getDataFromRemote(key string) (interface{}, error) {
 	b, err := p.dataHandler.Get(key)
 	if err != nil {
 		klog.Errorf("get remove data fail err %v", err)
