@@ -22,17 +22,23 @@ func mockOnEvictedFn(key string, value interface{}) error {
 }
 
 func main() {
+
 	var hostName string
 	var port int
 	var proxy bool
+	var verbosity int
 	flag.StringVar(&hostName, "hostname", "0.0.0.0", "server host name")
 	flag.IntVar(&port, "port", 8080, "server port")
 	flag.BoolVar(&proxy, "proxy", true, "Is a proxy server?")
+	flag.IntVar(&verbosity, "v", 5, "number for the log level verbosity")
 	flag.Parse()
 
 	addr := net.JoinHostPort(hostName, strconv.Itoa(port))
 
 	ln, err := net.Listen("tcp", addr)
+	var level klog.Level
+	level.Set(strconv.Itoa(verbosity))
+	defer klog.Flush()
 	if err != nil {
 		klog.Errorf("failed to listen on %v: %v", ln.Addr, err)
 	}

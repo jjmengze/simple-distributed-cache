@@ -28,6 +28,21 @@ func NewServer(addr string, cache cache.SetterGetter) *Server {
 	return s
 }
 
+var db = map[string]string{
+	"apple":  "red",
+	"banana": "yellow",
+	"cat":    "black",
+}
+
+//todo fix mock select from db
+func mockSelectFromDB(key string) ([]byte, error) {
+	klog.V(4).InfoS("[MOCK] search from DB with:", "key", key)
+	if v, ok := db[key]; ok {
+		return []byte(v), nil
+	}
+	return nil, fmt.Errorf("%s not exist", key)
+}
+
 func (p *Server) Set(hashFn consistent.HashFn, peers ...string) {
 	if p.peerMapHandler == nil {
 		p.peerMapHandler = make(map[string]PeerGetter)
@@ -35,7 +50,7 @@ func (p *Server) Set(hashFn consistent.HashFn, peers ...string) {
 	p.peersNode = consistent.NewConsistentMAP(consistent.DefaultReplicas, hashFn)
 	p.peersNode.Add(peers...)
 	for i := 0; i < len(peers); i++ {
-		p.peerMapHandler[peers[i]] = NewPeer(peers[i], p.cache)
+		p.peerMapHandler[peers[i]] = NewPeer(peers[i], GetterFunc(mockSelectFromDB), p.cache)
 	}
 }
 
